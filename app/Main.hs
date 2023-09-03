@@ -23,10 +23,13 @@ data Args = Args
   deriving (Eq, Show)
 
 args :: Parser Args
-args = Args <$> argument str (metavar "FILE") <*> optional (argument str (metavar "OUTPUT"))
+args =
+  Args
+    <$> argument str (metavar "FILE" <> help "flipper zero nfc file")
+    <*> optional (argument str (metavar "OUTPUT"))
 
 opts :: ParserInfo Args
-opts = info (args <**> helper) (fullDesc <> progDesc "convert nfc to eml")
+opts = info (args <**> helper) (fullDesc <> progDesc "convert nfc to bin")
 
 parseInt :: Text -> Integer
 parseInt = fst . fromRight (0, "") . decimal
