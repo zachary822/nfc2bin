@@ -13,11 +13,11 @@ commentLine = do
 
 keyValuePair :: Parser (Text, Text)
 keyValuePair = do
-  skipSpace
-  key <- takeTill ((||) <$> (== ':') <*> (== '#'))
+  key <- takeTill (== ':')
   _ <- char ':'
   skipSpace
   value <- takeTill ((||) <$> isEndOfLine <*> (== '#'))
+  skipWhile (not . isEndOfLine)
   endOfLine
 
   return (key, value)
@@ -25,7 +25,7 @@ keyValuePair = do
 keyValueOrComment :: Parser (Maybe (Text, Text))
 keyValueOrComment = do
   skipSpace
-  choice [Just <$> try keyValuePair, Nothing <$ try commentLine]
+  choice [Nothing <$ try commentLine, Just <$> try keyValuePair]
 
 parseNfc :: Parser (M.Map Text Text)
 parseNfc = do
